@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#173d32">
+  <meta name="description" content="Turn a quick scan into a conversation. Create and download a WhatsApp QR code for your business, with a ready-to-send inquiry and source tag.">
+  <title>Let's Connect — A scan away from hello.</title>
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="vendor/qrcode.js"></script>
+  <script defer src="vendor/libphonenumber.js"></script>
+  <script defer src="core.js"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <header class="site-header wrap">
+    <a class="wordmark" href="./" aria-label="Let's Connect home"><span class="brand-icon" aria-hidden="true">↗</span>let’s connect<span class="brand-dot">.</span></a>
+    <a class="how-link" href="#how-it-works">How it works <span aria-hidden="true">↗</span></a>
+  </header>
+  <main class="wrap">
+    <section class="hero" aria-labelledby="page-title">
+      <div class="eyebrow"><span class="tiny-spark" aria-hidden="true">✳</span> SMALL SCAN. BIG CONNECTION.</div>
+      <h1 id="page-title">Your next customer.<br>One scan from <em>hello.</em></h1>
+      <p>Make it easy to reach your business on WhatsApp.<br class="desktop-break"> Create a QR code, put it out there, and let the conversation begin.</p>
+      <div class="benefits"><span>✓ Free to create</span><span>✓ No sign-up</span><span>✓ Ready to print</span></div>
+    </section>
+
+    <section class="builder" aria-label="WhatsApp QR code generator">
+      <div class="editor">
+        <div class="section-heading"><div><span class="step-label">01 / MAKE IT YOURS</span><h2>A little about your business.</h2></div><span class="mini-grid" aria-hidden="true">▦</span></div>
+        <form id="qr-form" novalidate>
+          <div class="field"><label for="business">Business name <span aria-hidden="true">*</span></label><input id="business" name="business" type="text" autocomplete="organization" placeholder="e.g. Naam Dekho" maxlength="60" required aria-describedby="business-error"><p class="error" id="business-error"></p></div>
+          <div class="field"><label for="phone">WhatsApp number <span aria-hidden="true">*</span></label><div class="phone-field"><span aria-hidden="true">↗</span><input id="phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="+91 63866 09425" maxlength="30" required aria-describedby="phone-hint phone-error"></div><p class="hint" id="phone-hint">Include + and your country code. Use a number on WhatsApp.</p><p class="error" id="phone-error"></p></div>
+          <div class="field source-field"><label for="source">Where will this QR live?</label><input id="source" name="source" type="text" value="Packaging" maxlength="40" aria-describedby="source-hint source-error"><p class="hint" id="source-hint">Added to the message as a source tag. No scan tracking.</p><p class="error" id="source-error"></p><div class="source-options" aria-label="Source suggestions"><button type="button" data-source="Packaging" class="selected" aria-pressed="true">Packaging</button><button type="button" data-source="Store counter" aria-pressed="false">Store counter</button><button type="button" data-source="Business card" aria-pressed="false">Business card</button></div></div>
+          <details class="message-settings"><summary>Personalize the inquiry <span>Optional</span></summary><div class="field"><label for="inquiry">Customer’s prefilled message</label><textarea id="inquiry" name="inquiry" rows="3" maxlength="180" placeholder="Hi Naam Dekho! I'd like to know more about your products and services." aria-describedby="inquiry-hint inquiry-error"></textarea><p class="hint" id="inquiry-hint">Leave blank for a friendly inquiry with your business name.</p><p class="error" id="inquiry-error"></p></div></details>
+          <button class="primary generate" type="submit">Generate my QR code <span aria-hidden="true">↗</span></button>
+          <p class="example-line">Just looking around? <button type="button" id="example">Try an example</button></p>
+          <p id="form-status" class="form-status" role="status"></p>
+        </form>
+      </div>
+      <div class="preview-panel" aria-labelledby="preview-heading">
+        <div class="preview-top"><span class="step-label" id="preview-heading">02 / PICTURE THE CONNECTION</span><span class="status-pill" id="preview-status">Your preview</span></div>
+        <div class="qr-card" id="qr-card">
+          <div class="card-topline"><span class="small-star" aria-hidden="true">✳</span><span>A SCAN AWAY FROM HELLO</span></div>
+          <h3 id="card-business">Your business, here.</h3>
+          <p class="card-subtitle">Good conversations start here.</p>
+          <div class="qr-frame">
+            <canvas id="qr-canvas" width="1000" height="1000" role="img" aria-label="Generated WhatsApp QR code" hidden></canvas>
+            <div id="qr-placeholder" class="qr-placeholder"><svg aria-hidden="true" viewBox="0 0 120 120"><g fill="none" stroke="currentColor" stroke-width="5"><rect x="8" y="8" width="38" height="38" rx="5"/><rect x="74" y="8" width="38" height="38" rx="5"/><rect x="8" y="74" width="38" height="38" rx="5"/></g><g fill="currentColor"><rect x="20" y="20" width="14" height="14" rx="2"/><rect x="86" y="20" width="14" height="14" rx="2"/><rect x="20" y="86" width="14" height="14" rx="2"/><path d="M74 74h14v14H74zm24 0h14v38H98zM74 98h14v14H74z"/></g></svg><span>Your QR goes here</span></div>
+          </div>
+          <div class="card-cta"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M20.5 11.6a8.5 8.5 0 0 1-12.6 7.5L3 20.5l1.4-4.8A8.5 8.5 0 1 1 20.5 11.6Z"/><path d="M8 7.5c0 4.5 4 8 8 8l1-2-3-1-1 1c-1.5-.5-2.5-1.5-3-3l1-1-1-3Z"/></svg>Scan to chat on WhatsApp</div>
+          <p class="card-send">Scan. Say hello. Tap Send.</p>
+          <div class="card-footer">Made with <strong>let’s connect.</strong></div>
+        </div>
+        <fieldset class="download-format"><legend>Download format</legend><label><input type="radio" name="format" value="card" checked><span>Print-ready card</span></label><label><input type="radio" name="format" value="qr"><span>QR code only</span></label></fieldset>
+        <button class="download" id="download" type="button" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m-5-5 5 5 5-5M5 16v5h14v-5"/></svg>Download PNG</button>
+        <div class="link-actions"><button id="copy" type="button" disabled>Copy WhatsApp link</button><span aria-hidden="true">·</span><a id="test-link" target="_blank" rel="noopener noreferrer" aria-disabled="true">Test link ↗</a></div>
+        <p id="download-status" class="download-status" role="status">High-resolution PNG · No watermark on QR-only exports</p>
+      </div>
+    </section>
+
+    <section class="message-preview" aria-labelledby="message-heading"><div class="message-label"><span class="bubble-icon" aria-hidden="true">↗</span><div><h2 id="message-heading">A hello, already written.</h2><p>What your customer sees in WhatsApp</p></div></div><div class="message-bubble"><p id="message-text">Hi Your business! I'd like to know more about your products and services.</p><p id="message-source">[Source: Packaging]</p></div><p class="send-notice"><strong>They’re in control.</strong> The message is prefilled, never sent automatically. Your customer must tap <strong>Send</strong> in WhatsApp.</p></section>
+
+    <section id="how-it-works" class="how-it-works" aria-labelledby="how-title"><div class="how-title"><span class="step-label">FROM PRINT TO CONVERSATION</span><h2 id="how-title">Out in the world.<br>Into your inbox.</h2></div><div class="how-step"><span>01</span><h3>Make it yours</h3><p>Add your name, WhatsApp number, and a source for your QR.</p></div><div class="how-step"><span>02</span><h3>Put it out there</h3><p>Download your PNG. Add it to packaging, menus, or your counter.</p></div><div class="how-step"><span>03</span><h3>Let them say hello</h3><p>Customers scan, review the inquiry, and tap Send in WhatsApp.</p></div></section>
+    <div class="privacy-note"><span aria-hidden="true">◇</span><p>Created right in your browser. No accounts, no saved customer data, no QR expiry.<br>Your phone number and message are included in the QR. Test a scan before printing.</p></div>
+  </main>
+  <footer class="wrap"><span class="footer-brand">let’s connect.</span><span>A little less friction. A lot more hello.</span><a href="https://faq.whatsapp.com/5913398998672934" target="_blank" rel="noopener noreferrer">About WhatsApp links ↗</a><small>Independent tool. Not affiliated with WhatsApp or Meta.</small></footer>
+  <noscript><p class="noscript">Please enable JavaScript to generate your QR code. All generation happens in your browser.</p></noscript>
+</body>
+</html>
