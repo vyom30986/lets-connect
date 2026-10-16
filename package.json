@@ -1,0 +1,8 @@
+{
+  "name": "lets-connect",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A browser-local WhatsApp QR generator for businesses",
+  "scripts": { "start": "node serve.cjs", "test": "node --test tests/core.test.cjs" },
+  "engines": { "node": ">=18" }
+}
