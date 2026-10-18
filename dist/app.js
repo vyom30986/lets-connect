@@ -6,6 +6,8 @@
   let generated = null;
   let revision = 0;
   let busy = false;
+  let saving = false;
+  let pendingRegistration = null;
   function values() { return Object.fromEntries(fields.map(id => [id, $(id).value])); }
   function enableActions(enabled) {
     $('download').disabled = !enabled || busy;
@@ -31,6 +33,10 @@
   }
   function invalidate() {
     revision++;
+    if (saving) {
+      $('preview-status').textContent = 'Details changed';
+      $('form-status').textContent = 'Details changed. Wait for the current save to finish, then generate again.';
+    }
     if (generated) {
       generated = null;
       $('qr-canvas').hidden = true;
@@ -55,8 +61,9 @@
       if (qr.isDark(row, col)) ctx.fillRect(start + col * unit, start + row * unit, unit, unit);
     }
   }
-  function generate(event) {
+  async function generate(event, demo = false) {
     event?.preventDefault();
+    if (saving) return;
     clearErrors();
     if (!window.qrcode || !window.libphonenumber) {
       $('form-status').textContent = 'The QR tools could not load. Reload this page and try again.';
@@ -78,6 +85,40 @@
       const qr = qrcode(0, 'M');
       // The entire URL is ASCII: encodeURIComponent preserves non-Latin messages.
       qr.addData(url, 'Byte'); qr.make();
+      if (!demo) {
+        const payload = { business: data.business, phone: data.phone, source: data.source };
+        const key = JSON.stringify(payload);
+        if (!pendingRegistration || pendingRegistration.key !== key) pendingRegistration = { key, eventId: crypto.randomUUID() };
+        const eventId = pendingRegistration.eventId;
+        const currentRevision = revision;
+        saving = true;
+        form.querySelector('[type="submit"]').disabled = true;
+        $('example').disabled = true;
+        generated = null; enableActions(false);
+        $('qr-canvas').hidden = true; $('qr-placeholder').hidden = false;
+        $('preview-status').textContent = 'Saving details';
+        $('form-status').textContent = 'Saving your business details…';
+        try {
+          const response = await fetch('/api/registrations', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ...payload, eventId }), signal: AbortSignal.timeout(30000)
+          });
+          const result = await response.json();
+          if (!response.ok || result.ok !== true || result.eventId !== eventId) throw new Error('Save not confirmed');
+          if (currentRevision !== revision) return;
+          pendingRegistration = null;
+        } catch {
+          if (currentRevision === revision) {
+            $('preview-status').textContent = 'Please retry';
+            $('form-status').textContent = 'We couldn’t confirm your registration. Tap Generate again to retry safely.';
+          }
+          return;
+        } finally {
+          saving = false;
+          form.querySelector('[type="submit"]').disabled = false;
+          $('example').disabled = false;
+        }
+      }
       drawQR($('qr-canvas'), qr);
       generated = { data, url, qr };
       revision++;
@@ -85,7 +126,7 @@
       $('qr-canvas').setAttribute('aria-label', `WhatsApp QR code for ${data.business}`);
       $('card-business').textContent = data.business;
       $('preview-status').textContent = 'Ready to share';
-      $('form-status').textContent = 'Your QR is ready. Test the link or scan before printing.';
+      $('form-status').textContent = demo ? 'Example generated for Naam Dekho (+91). This demo is not saved. Replace these details before sharing.' : 'Business details saved. Your QR is ready—test a scan before printing.';
       enableActions(true);
       $('download-status').textContent = 'Choose your format and download your PNG.';
       refreshDraft();
@@ -166,7 +207,7 @@
   document.querySelectorAll('[data-source]').forEach(button => button.addEventListener('click', () => { $('source').value = button.dataset.source; $('source').removeAttribute('aria-invalid'); $('source-error').textContent = ''; invalidate(); }));
   $('example').addEventListener('click', () => {
     $('business').value = 'Naam Dekho'; $('phone').value = '+91 6386609425'; $('source').value = 'Packaging'; $('inquiry').value = '';
-    invalidate(); generate(); $('form-status').textContent = 'Example generated for Naam Dekho (+91). Replace these details with your own before sharing.';
+    invalidate(); generate(null, true);
   });
   $('download').addEventListener('click', download);
   $('copy').addEventListener('click', copyLink);
